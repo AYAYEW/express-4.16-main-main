@@ -1,0 +1,46 @@
+
+<div class="overflow-x-auto">
+
+    <table class="table">
+        <!-- head -->
+        <thead>
+            <tr>
+                <th>ID prijave</th>
+                <th>Ime natjecatelja</th>
+                <th>Ime natjecanja</th>
+                <th>Broj bodova</th>
+                <th>unos bodova</th>
+               
+
+            </tr>
+        </thead>
+        <!-- body -->
+        <tbody>
+            {{#each result.items}}
+            <tr>
+                <th>{{this.id}}</th>
+                <td>{{this.natjecatelj}}</td>
+                <td>{{this.natjecanje}}</td>
+                <td>{{this.score}}</td>
+                <td class="flex flex-wrap gap-2">
+                    {{#if ../user.is_admin }}
+
+                    <form method="post" action="/competitions/scoreUpdate/{{this.id}}"
+                        class="flex flex-col gap-2">
+                        {{> form_buttons }}
+                        <input type="number" name="score" placeholder="Unesi bodove"
+                        class="input input-bordered w-full max-w-xs" />
+                        <input type="text" name="competitionid" hidden="" value="{{this.competitionid}}">
+                    </form>   
+                    {{/if}}
+                </td>
+                <td>
+                    <a href="/competitions/pdf/{{this.competitionid}}" class="btn btn-primary btn-xs">Generiraj PDF
+                        izvješće</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+</div>

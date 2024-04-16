@@ -1,0 +1,47 @@
+<div class="p-2">
+    {{#if user.is_admin }}
+    <a href="/competitions/add" class="btn btn-primary">Novo natjecanje</a>
+    {{/if}}
+
+    <div class="overflow-x-auto">
+        <table class="table">
+            <!-- head -->
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ime</th>
+                    <th>Opis</th>
+                    <th>Rok prijave</th>
+                    <th>Autor</th>
+                    <th>Mogućnosti</th>
+
+                </tr>
+            </thead>
+            <!-- body -->
+            <tbody>
+                {{#each result.items}}
+                <tr>
+                    <th>{{this.id}}</th>
+                    <td>{{this.name}}</td>
+                    <td>
+                        <div class="line-clamp-2">
+                            {{this.description}}
+                        </div>
+                    </td>
+                    <td x-data="{}">
+                        <span x-text="new Date('{{this.apply_till}}').toLocaleString()"></span>
+                    </td>
+                    <td>{{this.author}}</td>
+                    <td class="flex flex-wrap gap-2">
+                        {{#if ../user.is_admin }}
+                        <a href="/competitions/edit/{{this.id}}" class="btn btn-accent btn-xs">Uredi</a>
+                        <a href="/competitions/delete/{{this.id}}" class="btn btn-error btn-xs">Briši</a>
+                        {{/if}}
+                        <a href="/competitions/signed/{{this.id}}" class="btn btn-primary btn-xs">Prijavi se </a>
+                        <a href="/competitions/score/{{this.id}}" class="btn btn-primary btn-xs">Rezultati natjecanja</a>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>

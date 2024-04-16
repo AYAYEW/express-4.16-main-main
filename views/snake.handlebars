@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #222;
+            color: #fff;
+        }
+        canvas {
+            display: block;
+            margin: auto;
+            background-color: #111;
+            border: 2px solid #fff;
+
+        }
+     </style>
+    <script>
+        window.onload = function() {
+            var canvas = document.createElement("canvas");
+            var ctx = canvas.getContext("2d");
+            var scale = 20;
+            var rows = canvas.height / scale;
+            var columns = canvas.width / scale;
+            var snake;
+            var fruit;
+            var user_id = Number("{{result.id}}");
+
+            (function setup() {
+                canvas.width = 600;
+                canvas.height = 400;
+                document.body.appendChild(canvas);
+                snake = new Snake();
+                fruit = new Fruit();
+                fruit.pickLocation();
+                window.setInterval(() => {//arey (repet)
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);//clear canvas
+                    fruit.draw();
+                    snake.update();
+                    snake.draw();
+
+                    if (snake.eat(fruit)) {
+                        fruit.pickLocation();
+                    }
+
+                    if (snake.checkCollision()) {
+                        snake.reset();
+                    }
+// score update
+                    document.querySelector('span').innerText = snake.total;
+                }, 250);
+
+            }());
+//move
+            window.addEventListener('keydown', e => {
+                const direction = e.key.replace('Arrow', '');
+                snake.changeDirection(direction);
+            });
+//snake function
+            function Snake() {
+                this.x = canvas.width / 2;
+                this.y = canvas.height / 2;
+                this.xSpeed = scale * 1;
+                this.ySpeed = 0;
+                this.total = 0;
+                this.tail = [];
+//snake tail draw
+                this.draw = function() {
+                    ctx.fillStyle = "#00ff00";
+                    for (let i = 0; i < this.tail.length; i++) {
+                        ctx.fillRect(this.tail[i].x, this.tail[i].y, scale, scale);
+                    }
+                    ctx.fillRect(this.x, this.y, scale, scale);
+                };
+//update snake tail
+                this.update = function() {
+                    for (let i = 0; i < this.tail.length - 1; i++) {//mice tail 1 za glavom istom brzinom
+                        this.tail[i] = this.tail[i + 1];
+                    }                   //PROBLEM!!!!!!  AKO TAIL PRE DUGACAK NEMRE SE DOBRO MIJENJATI SMJER PONEKAD SE SCORE RESETA MAKAR NIJE KOLIZIJA
+                    this.tail[this.total - 1] = { x: this.x, y: this.y };
+
+                    this.x += this.xSpeed;
+                    this.y += this.ySpeed;
+//canvas border
+                    if (this.x >= canvas.width) {
+                        this.reset();
+                        const span = document.querySelector('#span');// uzme score (valjda dobro)
+                        span.textContent = score;
+                        
+                    }
+                    if (this.y >= canvas.height) {
+                        this.reset();
+
+                    }
+                    if (this.x < 0) {
+                        this.reset();
+
+                    }
+                    if (this.y < 0) {
+                        this.reset();
+
+                    }
+                };
+//movement
+                this.changeDirection = function(direction) {
+                    switch (direction) {
+                        case 'Up':
+                            if (this.ySpeed !== scale * 1) {
+                                this.xSpeed = 0;
+                                this.ySpeed = -scale * 1;
+                            }
+                            break;
+                        case 'Down':
+                            if (this.ySpeed !== -scale * 1) {
+                                this.xSpeed = 0;
+                                this.ySpeed = scale * 1;
+                            }
+                            break;
+                        case 'Left':
+                            if (this.xSpeed !== scale * 1) {
+                                this.xSpeed = -scale * 1;
+                                this.ySpeed = 0;
+                            }
+                            break;
+                        case 'Right':
+                            if (this.xSpeed !== -scale * 1) {
+                                this.xSpeed = scale * 1;
+                                this.ySpeed = 0;
+                            }
+                            break;
+                    }
+                };
+
+                this.eat = function(fruit) {
+                    if (this.x === fruit.x && this.y === fruit.y) {
+                        this.total++;
+                        return true;
+                    }
+                    return false;
+                };
+
+//frut eat
+                this.checkCollision = function() {
+                    for (var i = 0; i < this.tail.length; i++) {
+                        if (this.x === this.tail[i].x && this.y === this.tail[i].y)
+                        
+
+                         {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+
+                this.reset = function() {
+                    this.x = canvas.width / 2;
+                    this.y = canvas.height / 2;
+                    this.xSpeed = scale * 1;
+                    this.ySpeed = 0;
+                    this.total = 0;
+                    this.tail = [];
+                };
+            }
+
+            function Fruit() {
+                this.x;
+                this.y;
+
+                this.pickLocation = function() {
+                    this.x = (Math.floor(Math.random() * columns - 1) + 1) * scale;
+                    this.y = (Math.floor(Math.random() * rows - 1) + 1) * scale;
+                };
+
+                this.draw = function() {
+                    ctx.fillStyle = "#ff0000";
+                    ctx.fillRect(this.x, this.y, scale, scale);
+                };
+            }
+        }
+    </script>
+</head>
+<body>
+    <span>0</span>
+    <p>Score: </p>
+</body>
+</html>

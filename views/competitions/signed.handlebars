@@ -1,0 +1,41 @@
+<div class="p-2">
+    {{#if result.signedUp}}
+        <div class="mt-4">
+            <div class="card w-96 bg-primary text-primary-content">
+                <div class="card-body">
+                    <h2 class="card-title">Uspjeh!</h2>
+                    <p>
+                        Uspješno ste se prijavili na natjecanje!
+                    </p>
+                    <div class="card-actions justify-end">
+                        <a class="btn" href="/competitions">Nastavi na prikaz natjecanja</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{/if}}
+
+    {{#if result.validation_error}}
+        {{> validation_error }}
+    {{/if}}
+
+    {{#if result.database_error}}
+        {{> database_error}}
+    {{/if}}
+
+    {{#if result.already_signed_up}}
+    <div class="mt-4">
+            <div class="card w-96 bg-primary text-primary-content">
+                <div class="card-body">
+                    <h2 class="card-title">Kuda?!</h2>
+                    <p>
+                        Već ste se jednom prijavili na natjecanje, ne možete ponovno!
+                    </p>
+                    <div class="card-actions justify-end">
+                        <a class="btn" href="/competitions">Nastavi na prikaz natjecanja</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{/if}}
+</div>
